@@ -1,6 +1,7 @@
 if(!cc.runtime){
 
-var ANIMATION_NAME=["walk","jump","fall"];
+var ATTACK_TYPE=["fierce","ridicule","funny","white","curse","cold"];
+var BEAT_TYPE=["blood","wronged","cry","ashamed","beat","fuck"];
 cc.Class({
     extends: cc.Component,
 
@@ -41,7 +42,7 @@ cc.Class({
             default:null,
             type:cc.SpriteAtlas
         },
-
+        
         _roundData:[],
         _armature:[],
         _attackerFlag:1,
@@ -53,12 +54,18 @@ cc.Class({
         _presentRound:0,
         _totalRound:0,
         
+        _positionX:0,
+        _positionY:0,
+        _nowAttackPic:null,
+        _nowBeatPic:null,
+        
+        _gamePlayDuration:1,
     },
 
     // use this for initialization
     onLoad: function () {
         this.damageDisplayer=[this.damageDisplayer1,this.damageDisplayer2];
-        this.players=[this.player1,this.player2]
+        this.players=[this.player1,this.player2];
 
         cc.eventManager.addListener({
             event: cc.EventListener.KEYBOARD,
@@ -103,25 +110,32 @@ cc.Class({
         this._HP2=this._roundData[5];
         this._presentRound=this._roundData[6];
         this._totalRound=this._roundData[7];
-
+        
+        this._positionX=this.players[this._attackerFlag].getPositionX();
+        this._positionY=this.players[this._attackerFlag].getPositionY();
     },
     
     _gamePlay:function(){
-        this.players[this._attackerFlag].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame('attack-normal');
-        this.players[this._attackerFlag].runAction(cc.moveTo(0.1,(0.5-this._attackerFlag)*100,-320));
-        this.players[1-this._attackerFlag].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame('beat');
+        this._nowAttackPic='p1-0-'+ATTACK_TYPE[this._typeFlag-1]+'-'+this._superAttack.toString();
+        this._nowBeatPic='p1-1-'+BEAT_TYPE[this._typeFlag-1]+'-'+this._superAttack.toString();
+        this.players[this._attackerFlag].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame(this._nowAttackPic);
+        this.players[this._attackerFlag].runAction(cc.moveTo(0.1,(0.5-this._attackerFlag)*100,this._positionY));
+        this.players[1-this._attackerFlag].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame(this._nowBeatPic);
         this.damageDisplayer[this._attackerFlag].node.opacity=0;
         this.damageDisplayer[1-this._attackerFlag].node.opacity=255;
         this.damageDisplayer[1-this._attackerFlag].string='-'+this._damage.toString();
         this.hpDisplayer1.progress=this._HP1/1000;
         this.hpDisplayer2.progress=this._HP2/1000;
         this.roundDispalyer.string=this._presentRound.toString();
+        this.scheduleOnce(function(){
+            this._return();
+        },this._gamePlayDuration);
     },
     
     _return:function(){
-        this.players[0].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame('idle');
-        this.players[1].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame('idle');
-        this.players[this._attackerFlag].runAction(cc.moveTo(0.1,(0.5-this._attackerFlag)*-500,-320));
+        this.players[0].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame('p1-0-cold-0');
+        this.players[1].getComponent(cc.Sprite).spriteFrame=this.actions.getSpriteFrame('p1-0-cold-0');
+        this.players[this._attackerFlag].runAction(cc.moveTo(0.1,this._positionX,this._positionY));
         this.damageDisplayer[0].node.opacity=0;
         this.damageDisplayer[1].node.opacity=0;
     },
