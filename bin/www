@@ -94,3 +94,51 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+/**
+ *  Socket.IO server set up.
+ */
+var sio = io.listen(server);
+
+sio.configure(function () {
+  
+  sio.set('log level', 0);
+
+  sio.set('authorizaton', function (handshake, callback) {
+
+    callback(null, true);
+
+  });
+
+});
+
+var game_server = require("../game.server .js");
+
+sio.on('connection', function (client) {
+
+  // generate a new uuid, and store this on socket/connection
+  client.userid = UUID();
+
+  client.emit('onconnected', {id: client.userid});
+
+  game_server.findGame(client);
+
+  console.log('\t socket.io:: player ' + client.userid + ' connected');
+
+  client.on('message', function (msg) {
+
+    game_server.onMessage(client, msg);
+
+  }); // client.on message
+
+  client.on('disconnect', function () {
+    
+    console.log('\t socket.io:: client disconnected ' + client.userid + ' ' + client.game_id);
+
+    if (client.game && client.game.id) {
+      game_server.endGame(client.game.id, client.userid);
+    }
+
+  }); // client.on disconnect
+
+}); // sio.sockets.on connection
