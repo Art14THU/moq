@@ -1,0 +1,17 @@
+{
+  "excludeScenes": [],
+  "includeAnySDK": false,
+  "includeSdk": [
+    "anysdk"
+  ],
+  "orientation": {
+    "landscapeLeft": true,
+    "landscapeRight": true,
+    "portrait": false,
+    "upsideDown": false
+  },
+  "packageName": "org.cocos2d.moq",
+  "startScene": "cdadfca6-5cad-42fd-b7d2-e5e23d807fdc",
+  "title": "moq",
+  "webOrientation": "auto"
+}
