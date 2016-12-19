@@ -105,14 +105,12 @@ sio.configure(function () {
   sio.set('log level', 0);
 
   sio.set('authorizaton', function (handshake, callback) {
-
     callback(null, true);
-
   });
 
 });
 
-var game_server = require("../game.server .js");
+game_server = require("../game.server.js");
 
 sio.on('connection', function (client) {
 

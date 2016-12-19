@@ -16,7 +16,7 @@
     global.window = global.document = global;
 
         //Import shared game library code.
-    require('./game.core.js');
+    // require('./game.core.js');
 
         //A simple wrapper for logging so we can toggle it,
         //and augment it for clarity.
