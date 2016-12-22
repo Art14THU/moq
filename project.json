@@ -1,5 +1,4 @@
 {
   "engine": "cocos-creator-js",
-  "packages": "packages",
-  "modules": ["cocos2d", "socketio"]
+  "packages": "packages"
 }
