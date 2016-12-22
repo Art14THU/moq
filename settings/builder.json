@@ -10,8 +10,8 @@
     "portrait": false,
     "upsideDown": false
   },
-  "packageName": "org.cocos2d.moq",
+  "packageName": "org.cocos2d.MOQ",
   "startScene": "cdadfca6-5cad-42fd-b7d2-e5e23d807fdc",
-  "title": "moq",
+  "title": "MOQ",
   "webOrientation": "auto"
 }
