@@ -1,7 +1,12 @@
+var io = require('socket.io');
+var _sioClient;
+var SocketIO = SocketIO || io;
+
 if(!cc.runtime){
 
 var ATTACK_TYPE=["fierce","ridicule","funny","white","curse","cold"];
 var BEAT_TYPE=["blood","wronged","cry","ashamed","beat","fuck"];
+
 cc.Class({
     extends: cc.Component,
 
@@ -64,6 +69,11 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        this.socket = SocketIO.connect("http://localhost:3000");
+        this.socket.on('connect', function () {
+            this.players.self.state = 'connecting';
+        }.bind(this));
+
         this.damageDisplayer=[this.damageDisplayer1,this.damageDisplayer2];
         this.players=[this.player1,this.player2];
 

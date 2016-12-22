@@ -16,7 +16,7 @@
     global.window = global.document = global;
 
         //Import shared game library code.
-    // require('./game.core.js');
+    require('./build/web-mobile/cocos2d-js-min.js');
 
         //A simple wrapper for logging so we can toggle it,
         //and augment it for clarity.
@@ -100,7 +100,7 @@
         //Define some required functions
     game_server.createGame = function(player) {
 
-            //Create a new game instance
+        //Create a new game instance
         var thegame = {
                 id : UUID(),                //generate a new id for the game
                 player_host:player,         //so we know who initiated the game
