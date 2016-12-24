@@ -12,8 +12,9 @@ alert(Round3);
 */
 var WhoAttack,AttackTypeFlag,IfCriticalAttack,Damage,LifeLeftA,LifeLeftB,PresentRound;
 var _LastCharacter,VeryLastCharacter,NumberOfZhuoShengMu,NumberOfNoBreathQingShengMu,_NumberOfQingShengMu,_NumberOfKaiKouHu,_NumberOfQiChiHu,_NumberOfHeKouHu,_YunMu,_ShengMu,_NumberOfErHuaYin;
-
-function InitLanguageAnalysis()            //游戏开始时调用，用于游戏数据的初始化
+var PreviousAttackTypeFlag=0;
+var Fierce="傻死爸妈孙爷二滚逼"
+function InitLanguageAnalysis(AnalysisOutcome)            //游戏开始时调用，用于游戏数据的初始化
 {
 
     WhoAttack=Math.floor(Math.random()*1);
@@ -23,6 +24,8 @@ function InitLanguageAnalysis()            //游戏开始时调用，用于游�
     LifeLeftA=1000;
     LifeLeftB=1000;
     PresentRound=0;
+    AnalysisOutcome=WhoAttack+","+AttackTypeFlag+","+IfCriticalAttack+","+Damage+","+LifeLeftA+","+LifeLeftB+","+PresentRound;
+    return AnalysisOutcome;
     
 }
 
@@ -31,13 +34,17 @@ function OneRoundLanguageAnalysis(HanZi)    //输入一个汉字字符串，得�
 var ThisPinYin = codefans_net_CC2PY(HanZi);
 ThisPinYin=ThisPinYin.toLowerCase();
 
-var PreviousAttackTypeFlag=AttackTypeFlag;
+for (var i=0;i<Fierce.length;i++)
+{
+var FierceTest=Fierce.substring(i,i+1);
+if(HanZi.includes(FierceTest))IfCriticalAttack++;
+if(IfCriticalAttack>=2)break;
+}
 
-if(WhoAttack==0)WhoAttack=1;
-    else if(WhoAttack==1)WhoAttack=0;
-        else alert("Error")
+PreviousAttackTypeFlag=AttackTypeFlag;
 AttackTypeFlag=GetLanguageTypeFlag(ThisPinYin);
 Damage=CalculateDamage(AttackTypeFlag,PreviousAttackTypeFlag);
+Damage=Damage+50*IfCriticalAttack;                                        //关键词
 if(WhoAttack==0)
 {
     if(Damage<=LifeLeftB)LifeLeftB=LifeLeftB-Damage;
@@ -61,6 +68,12 @@ if(WhoAttack==0)
 PresentRound++;
 
 AnalysisOutcome=WhoAttack+","+AttackTypeFlag+","+IfCriticalAttack+","+Damage+","+LifeLeftA+","+LifeLeftB+","+PresentRound;
+
+if(WhoAttack==0)WhoAttack=1;
+    else if(WhoAttack==1)WhoAttack=0;
+        else alert("Error");
+IfCriticalAttack=0;
+
 return AnalysisOutcome;
 }
 
@@ -89,7 +102,7 @@ function CalculateDamage(AFlag,PAFlag)              //伤害计算
     case 3:
         var n=1;
         var RandD=0;
-        CalDamage=70;
+        CalDamage=35;
         while((n<=6)&&(RandD<=0.5))
         {
             RandD=Math.random();
@@ -99,10 +112,10 @@ function CalculateDamage(AFlag,PAFlag)              //伤害计算
         CalDamage=Math.floor(CalDamage*TypeFlagCompensation);
         break;
     case 4:
-        CalDamage=Math.floor(110+20*Math.random()*TypeFlagCompensation);
+        CalDamage=Math.floor((110+20*Math.random())*TypeFlagCompensation);
         break;
     case 5:
-        CalDamage=Math.floor(140+20*Math.random()*TypeFlagCompensation);
+        CalDamage=Math.floor((140+20*Math.random())*TypeFlagCompensation);
         break;
     default:
     
@@ -113,6 +126,7 @@ function CalculateDamage(AFlag,PAFlag)              //伤害计算
 function DamageCompensation(AFlag,PAFlag)          //类别伤害补正判断         
 {
     var typer=1;
+    
     if((AFlag!=0)&&(AFlag!=1)&&(AFlag!=2)&&(AFlag!=3)&&(AFlag!=4)&&(AFlag!=5))alert("Error");
     if((AFlag==5)||(PAFlag==5))typer=1.2;
     else 
@@ -155,8 +169,7 @@ function GetLanguageTypeFlag(AllPinYin)             //类别分析，未完成�
     var FinishFlag=0;
     var LanguageKind=-1;
     InitLanguageTypeFlag();
-
-
+    
     if((FinishFlag==0)&&(AllPinYin.length<=5)){FinishFlag=1;LanguageKind=4;}
     else if((FinishFlag==0)&&(AllPinYin.length>=30)){FinishFlag=1;LanguageKind=3;};
     
