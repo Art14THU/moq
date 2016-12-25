@@ -1,4 +1,3 @@
-if (!cc.runtime) {
     cc.Class({
         extends: cc.Component,
 
@@ -15,12 +14,22 @@ if (!cc.runtime) {
                 default: null,
                 type: cc.Label
             },
+            progresser1: {
+                default:null,
+                type: cc.ProgressBar
+            },
+            progresser2: {
+                default:null,
+                type: cc.ProgressBar
+            },
+
+            duration:20,
+            _progressTimer:0,
         },
 
         session: null,
         oldText: "",
         _result: "",
-
 
         // use this for initialization
         onLoad: function() {
@@ -49,9 +58,11 @@ if (!cc.runtime) {
                 "callback": {
                     "onResult": function(err, result) {
                         if (err == null || err == undefined || err == 0) {
-                            if (result == '' || result == null)
+                            if (result == '' || result == null){
                                 //alert("没有获取到识别结果");
                                 _this.tester.string = "没有获取到识别结果";
+                                _this._show("啊");
+                            }
                             else{
                                 //alert(result.toString());
                                 _this.tester.string = result.toString();
@@ -93,15 +104,11 @@ if (!cc.runtime) {
                 }
             });
 
-            if (this.recorder) {
-                this.recorder.on(cc.Node.EventType.TOUCH_START, event => {
-                    this._record();
-                }, this);
-            }
-            
             this.node.on('playerExchange',function(event){
                 _this._record(); 
-            }, this);        
+            }, this);
+            
+            this._record();
         },
 
         _record: function() {
@@ -109,10 +116,34 @@ if (!cc.runtime) {
                 "grammar_list": null,
                 "params": "appid=583a97de,appidkey=5417118c65059796, lang = sms, acous = anhui, aue=speex-wb;-1, usr = mkchen, ssm = 1, sub = iat, net_type = wifi, rse = utf8, ent =sms16k, rst = plain, auf  = audio/L16;rate=16000, vad_enable = 1, vad_timeout = 5000, vad_speech_tail = 500, compress = igzip"
             };
-            this.session.start(ssb_param);
+
+            this.recorder.interactable=true;
+            
+            if (this.recorder) {
+                this.recorder.on(cc.Node.EventType.TOUCH_START, event => {
+                    this.session.start(ssb_param);
+                    this._progressTimer=0;
+                    this.progresser1.node.opacity=255;
+                    this.progresser2.node.opacity=255;
+
+                }, this);
+                this.recorder.on(cc.Node.EventType.TOUCH_END, event => {
+                    this.session.stop();
+                    this.recorder.interactable=false;
+
+                }, this);
+                this.recorder.on(cc.Node.EventType.TOUCH_CANCEL, event => {
+                    this.session.stop();
+                    this.recorder.interactable=false;
+                }, this);
+            }
         },
         
         _show: function(result) {
+            this.recorder.interactable=false;
+            this.progresser1.node.opacity=0;
+            this.progresser2.node.opacity=0;
+            this.recorder.interactable=false;
             this._result = result.toString();
             this.resulter.string = this._result;
             this.node.dispatchEvent( new cc.Event.EventCustom('getResult', true) );
@@ -121,7 +152,12 @@ if (!cc.runtime) {
 
 
         // called every frame, uncomment this function to activate update callback
-        //update: function (dt) {
-        //},
+        update: function (dt) {
+            this.progresser1.progress=this._progressTimer;
+            this.progresser2.progress=this._progressTimer;
+            this._progressTimer+=dt/this.duration;
+            if(this._progressTimer>=1){
+                this._progressTimer=1;
+            }
+        },
     });
-}

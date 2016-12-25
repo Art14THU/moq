@@ -1,0 +1,49 @@
+cc.Class({
+    extends: cc.Component,
+
+    properties: {
+        BackButton: {
+                default: null,
+                type: cc.Node
+            },
+            
+        NextButton: {
+                default: null,
+                type: cc.Node
+            },
+        
+        
+    },
+
+    // use this for initialization
+    onLoad: function () {
+                if (this.BackButton) {
+                this.BackButton.on(cc.Node.EventType.TOUCH_START, event => {
+                    this._BackButton();
+                }, this)}
+                
+                if (this.NextButton) {
+                this.NextButton.on(cc.Node.EventType.TOUCH_START, event => {
+                    this._NextButton();
+                }, this)}
+                
+            
+    },
+    
+    _BackButton(){
+        cc.director.loadScene('Start');
+        
+    },
+    
+    _NextButton(){
+        cc.director.loadScene('Help1');
+    },
+
+ 
+    // called every frame, uncomment this function to activate update callback
+    // update: function (dt) {
+
+    // },
+});
+
+
